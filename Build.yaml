@@ -1,0 +1,14 @@
+jar: LiteSoftJson
+
+
+resources: 
+- $source$
+- src|**.xml
+- LICENSE
+
+dependencies:
+- ../LiteSoftExternalization
+- ../LiteSoftCommonFoundation
+
+compileclasspath:
+- libs|**.jar
