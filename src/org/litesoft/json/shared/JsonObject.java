@@ -1,12 +1,14 @@
 package org.litesoft.json.shared;
 
+import org.litesoft.commonfoundation.problems.*;
+
 import java.sql.*;
 import java.util.*;
 
 public interface JsonObject {
     public Double getVersion();
 
-    public void addIssue( String pIssue );
+    public void addProblem( Problem pProblem );
 
     public Set<String> keySet();
 

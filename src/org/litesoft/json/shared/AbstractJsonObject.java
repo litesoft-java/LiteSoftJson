@@ -1,5 +1,6 @@
 package org.litesoft.json.shared;
 
+import org.litesoft.commonfoundation.problems.*;
 import org.litesoft.commonfoundation.typeutils.*;
 
 import java.util.*;
@@ -7,13 +8,14 @@ import java.util.*;
 public abstract class AbstractJsonObject implements JsonObject {
 
     protected final Double mVersion;
-    protected final Set<String> mIssueCollector;
+    protected final ProblemCollector mProblemCollector;
 
-    public AbstractJsonObject( Double pVersion, Set<String> pIssueCollector ) {
+    public AbstractJsonObject( Double pVersion, ProblemCollector pProblemCollector ) {
         mVersion = pVersion;
-        mIssueCollector = pIssueCollector;
+        mProblemCollector = pProblemCollector;
     }
 
+    @Override
     public final Double getVersion() {
         return mVersion;
     }
@@ -37,7 +39,7 @@ public abstract class AbstractJsonObject implements JsonObject {
     protected abstract void populateStringArray( List<String> pStrings, String pName );
 
     @Override
-    public void addIssue( String pIssue ) {
-        mIssueCollector.add( pIssue );
+    public void addProblem( Problem pProblem ) {
+        mProblemCollector.add( pProblem );
     }
 }

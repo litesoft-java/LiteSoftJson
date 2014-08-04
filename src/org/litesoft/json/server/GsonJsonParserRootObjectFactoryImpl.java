@@ -2,6 +2,7 @@ package org.litesoft.json.server;
 
 import org.litesoft.commonfoundation.base.*;
 import org.litesoft.commonfoundation.exceptions.*;
+import org.litesoft.commonfoundation.problems.*;
 import org.litesoft.commonfoundation.typeutils.*;
 import org.litesoft.commonfoundation.typeutils.gregorian.*;
 import org.litesoft.json.shared.*;
@@ -18,11 +19,12 @@ public class GsonJsonParserRootObjectFactoryImpl extends JsonParserRootObjectFac
     }
 
     @Override
-    public RootJsonObject createRootObject( String pJson, String pJsonVersionAttributeName, Set<String> pIssueCollector )
+    public RootJsonObject createRootObject( String pJson, String pJsonVersionAttributeName, ProblemCollector pProblemCollector )
             throws JsonVersionException {
         com.google.gson.JsonObject zJsonObject = asObject( new JsonParser().parse( pJson ) );
         if ( zJsonObject != null ) {
-            return new GSONRootJsonObject( getVersion( zJsonObject, ConstrainTo.significantOrNull( pJsonVersionAttributeName ) ), pIssueCollector, zJsonObject );
+            return new GSONRootJsonObject( getVersion( zJsonObject, ConstrainTo.significantOrNull( pJsonVersionAttributeName ) ), pProblemCollector,
+                                           zJsonObject );
         }
         return null;
     }
@@ -83,14 +85,14 @@ public class GsonJsonParserRootObjectFactoryImpl extends JsonParserRootObjectFac
 
     private static final ArrayElementHandler<JsonObject, JsonElement> OBJECT_HANDLER = new ArrayElementHandler<JsonObject, JsonElement>( "object" ) {
         @Override
-        public void add( List<JsonObject> pCollector, Set<String> pIssueCollector, int pIndex, JsonElement pNonNullArrayEntry, Double pVersion ) {
-            pCollector.add( new GSONJsonObject( pVersion, pIssueCollector, assertNotNull( asObject( pNonNullArrayEntry ), pIndex, pNonNullArrayEntry ) ) );
+        public void add( List<JsonObject> pCollector, ProblemCollector pProblemCollector, int pIndex, JsonElement pNonNullArrayEntry, Double pVersion ) {
+            pCollector.add( new GSONJsonObject( pVersion, pProblemCollector, assertNotNull( asObject( pNonNullArrayEntry ), pIndex, pNonNullArrayEntry ) ) );
         }
     };
 
     private static final ArrayElementHandler<String, JsonElement> STRING_HANDLER = new ArrayElementHandler<String, JsonElement>( "String" ) {
         @Override
-        public void add( List<String> pCollector, Set<String> pIssueCollector, int pIndex, JsonElement pNonNullArrayEntry, Double pVersion ) {
+        public void add( List<String> pCollector, ProblemCollector pProblemCollector, int pIndex, JsonElement pNonNullArrayEntry, Double pVersion ) {
             pCollector.add( assertNotNull( asString( pNonNullArrayEntry ), pIndex, pNonNullArrayEntry ) );
         }
     };
@@ -98,8 +100,8 @@ public class GsonJsonParserRootObjectFactoryImpl extends JsonParserRootObjectFac
     private static class GSONJsonObject extends AbstractJsonObject {
         private final com.google.gson.JsonObject mJsonObject;
 
-        public GSONJsonObject( Double pVersion, Set<String> pIssueCollector, com.google.gson.JsonObject pJsonObject ) {
-            super( pVersion, pIssueCollector );
+        public GSONJsonObject( Double pVersion, ProblemCollector pProblemCollector, com.google.gson.JsonObject pJsonObject ) {
+            super( pVersion, pProblemCollector );
             mJsonObject = pJsonObject;
         }
 
@@ -135,7 +137,7 @@ public class GsonJsonParserRootObjectFactoryImpl extends JsonParserRootObjectFac
         @Override
         public JsonObject getObject( String name ) {
             com.google.gson.JsonObject obj = asObject( mJsonObject.get( name ) );
-            return (obj != null) ? new GSONJsonObject( mVersion, mIssueCollector, obj ) : null;
+            return (obj != null) ? new GSONJsonObject( mVersion, mProblemCollector, obj ) : null;
         }
 
         @Override
@@ -156,7 +158,7 @@ public class GsonJsonParserRootObjectFactoryImpl extends JsonParserRootObjectFac
                     for ( int i = 0; i < jsonArray.size(); i++ ) {
                         JsonElement arrayEntry = jsonArray.get( i );
                         if ( arrayEntry != null ) {
-                            pHandler.add( pCollector, mIssueCollector, i, arrayEntry, mVersion );
+                            pHandler.add( pCollector, mProblemCollector, i, arrayEntry, mVersion );
                         }
                     }
                 }
@@ -165,8 +167,8 @@ public class GsonJsonParserRootObjectFactoryImpl extends JsonParserRootObjectFac
     }
 
     private static class GSONRootJsonObject extends GSONJsonObject implements RootJsonObject {
-        public GSONRootJsonObject( Double pVersion, Set<String> pIssueCollector, com.google.gson.JsonObject pJsonObject ) {
-            super( pVersion, pIssueCollector, pJsonObject );
+        public GSONRootJsonObject( Double pVersion, ProblemCollector pProblemCollector, com.google.gson.JsonObject pJsonObject ) {
+            super( pVersion, pProblemCollector, pJsonObject );
         }
     }
 }

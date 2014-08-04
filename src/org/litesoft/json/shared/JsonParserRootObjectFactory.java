@@ -1,5 +1,7 @@
 package org.litesoft.json.shared;
 
+import org.litesoft.commonfoundation.problems.*;
+
 import java.util.*;
 
 public abstract class JsonParserRootObjectFactory {
@@ -36,12 +38,12 @@ public abstract class JsonParserRootObjectFactory {
         return mCurrentVersion;
     }
 
-    abstract public RootJsonObject createRootObject( String pJson, String pJsonVersionAttributeName, Set<String> pIssueCollector )
+    abstract public RootJsonObject createRootObject( String pJson, String pJsonVersionAttributeName, ProblemCollector pProblemCollector )
             throws JsonVersionException;
 
-    public boolean populate( JsonRootable pRootable, String pJson, String pJsonVersionAttributeName, Set<String> pIssueCollector )
+    public boolean populate( JsonRootable pRootable, String pJson, String pJsonVersionAttributeName, ProblemCollector pProblemCollector )
             throws JsonVersionException {
-        JsonObject zJsonObject = createRootObject( pJson, pJsonVersionAttributeName, pIssueCollector );
+        JsonObject zJsonObject = createRootObject( pJson, pJsonVersionAttributeName, pProblemCollector );
         if ( zJsonObject == null ) {
             return false;
         }
@@ -78,6 +80,6 @@ public abstract class JsonParserRootObjectFactory {
             return pToCheck;
         }
 
-        abstract public void add( List<T> pCollector, Set<String> pIssueCollector, int pIndex, JsonBase pNonNullArrayEntry, Double pVersion );
+        abstract public void add( List<T> pCollector, ProblemCollector pProblemCollector, int pIndex, JsonBase pNonNullArrayEntry, Double pVersion );
     }
 }

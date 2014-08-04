@@ -7,7 +7,6 @@ resources:
 - LICENSE
 
 dependencies:
-- ../LiteSoftExternalization
 - ../LiteSoftCommonFoundation
 
 compileclasspath:

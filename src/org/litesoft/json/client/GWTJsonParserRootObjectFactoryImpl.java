@@ -2,6 +2,7 @@ package org.litesoft.json.client;
 
 import org.litesoft.commonfoundation.base.*;
 import org.litesoft.commonfoundation.exceptions.*;
+import org.litesoft.commonfoundation.problems.*;
 import org.litesoft.commonfoundation.typeutils.gregorian.*;
 import org.litesoft.json.shared.*;
 
@@ -16,11 +17,11 @@ public class GWTJsonParserRootObjectFactoryImpl extends JsonParserRootObjectFact
     }
 
     @Override
-    public RootJsonObject createRootObject( String pJson, String pJsonVersionAttributeName, Set<String> pIssueCollector )
+    public RootJsonObject createRootObject( String pJson, String pJsonVersionAttributeName, ProblemCollector pProblemCollector )
             throws JsonVersionException {
         JSONObject zJsonObject = asObject( JSONParser.parseLenient( pJson ) );
         if ( zJsonObject != null ) {
-            return new GWTRootJsonObject( getVersion( zJsonObject, ConstrainTo.significantOrNull( pJsonVersionAttributeName ) ), pIssueCollector, zJsonObject );
+            return new GWTRootJsonObject( getVersion( zJsonObject, ConstrainTo.significantOrNull( pJsonVersionAttributeName ) ), pProblemCollector, zJsonObject );
         }
         return null;
     }
@@ -81,14 +82,14 @@ public class GWTJsonParserRootObjectFactoryImpl extends JsonParserRootObjectFact
 
     private static final ArrayElementHandler<JsonObject, JSONValue> OBJECT_HANDLER = new ArrayElementHandler<JsonObject, JSONValue>( "object" ) {
         @Override
-        public void add( List<JsonObject> pCollector, Set<String> pIssueCollector, int pIndex, JSONValue pNonNullArrayEntry, Double pVersion ) {
-            pCollector.add( new GWTJsonObject( pVersion, pIssueCollector, assertNotNull( asObject( pNonNullArrayEntry ), pIndex, pNonNullArrayEntry ) ) );
+        public void add( List<JsonObject> pCollector, ProblemCollector pProblemCollector, int pIndex, JSONValue pNonNullArrayEntry, Double pVersion ) {
+            pCollector.add( new GWTJsonObject( pVersion, pProblemCollector, assertNotNull( asObject( pNonNullArrayEntry ), pIndex, pNonNullArrayEntry ) ) );
         }
     };
 
     private static final ArrayElementHandler<String, JSONValue> STRING_HANDLER = new ArrayElementHandler<String, JSONValue>( "String" ) {
         @Override
-        public void add( List<String> pCollector, Set<String> pIssueCollector, int pIndex, JSONValue pNonNullArrayEntry, Double pVersion ) {
+        public void add( List<String> pCollector, ProblemCollector pProblemCollector, int pIndex, JSONValue pNonNullArrayEntry, Double pVersion ) {
             pCollector.add( assertNotNull( asString( pNonNullArrayEntry ), pIndex, pNonNullArrayEntry ) );
         }
     };
@@ -96,11 +97,12 @@ public class GWTJsonParserRootObjectFactoryImpl extends JsonParserRootObjectFact
     private static class GWTJsonObject extends AbstractJsonObject {
         private final JSONObject mJsonObject;
 
-        public GWTJsonObject( Double pVersion, Set<String> pIssueCollector, JSONObject pJsonObject ) {
-            super( pVersion, pIssueCollector );
+        public GWTJsonObject( Double pVersion, ProblemCollector pProblemCollector, JSONObject pJsonObject ) {
+            super( pVersion, pProblemCollector );
             mJsonObject = pJsonObject;
         }
 
+        @Override
         public Set<String> keySet() {
             return mJsonObject.keySet();
         }
@@ -128,7 +130,7 @@ public class GWTJsonParserRootObjectFactoryImpl extends JsonParserRootObjectFact
         @Override
         public JsonObject getObject( String name ) {
             JSONObject obj = asObject( mJsonObject.get( name ) );
-            return (obj != null) ? new GWTJsonObject( mVersion, mIssueCollector, obj ) : null;
+            return (obj != null) ? new GWTJsonObject( mVersion, mProblemCollector, obj ) : null;
         }
 
         @Override
@@ -149,7 +151,7 @@ public class GWTJsonParserRootObjectFactoryImpl extends JsonParserRootObjectFact
                     for ( int i = 0; i < jsonArray.size(); i++ ) {
                         JSONValue arrayEntry = jsonArray.get( i );
                         if ( arrayEntry != null ) {
-                            pHandler.add( pCollector, mIssueCollector, i, arrayEntry, mVersion );
+                            pHandler.add( pCollector, mProblemCollector, i, arrayEntry, mVersion );
                         }
                     }
                 }
@@ -158,8 +160,8 @@ public class GWTJsonParserRootObjectFactoryImpl extends JsonParserRootObjectFact
     }
 
     private static class GWTRootJsonObject extends GWTJsonObject implements RootJsonObject {
-        public GWTRootJsonObject( Double pVersion, Set<String> pIssueCollector, JSONObject pJsonObject ) {
-            super( pVersion, pIssueCollector, pJsonObject );
+        public GWTRootJsonObject( Double pVersion, ProblemCollector pProblemCollector, JSONObject pJsonObject ) {
+            super( pVersion, pProblemCollector, pJsonObject );
         }
     }
 }

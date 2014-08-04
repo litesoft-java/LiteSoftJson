@@ -1,8 +1,8 @@
 package org.litesoft.json.shared;
 
 import org.litesoft.commonfoundation.base.*;
-
-import org.litesoft.externalization.shared.*;
+import org.litesoft.commonfoundation.problems.*;
+import org.litesoft.commonfoundation.typeutils.*;
 
 public class JsonHelper {
     public static IllegalStateException notAsNamedAttributes( ToJson pCaller ) {
@@ -59,9 +59,7 @@ public class JsonHelper {
         }
     }
 
-    public static void addIssue( JsonObject pObject, ExternalizableCodeSupplier pExternalizableCodeSupplier, Object... pIndexParameters ) {
-        E13nResolver zResolver = GlobalE13nResolver.get();
-        String zIssue = zResolver.resolve( new ExternalizeSubstitutionEntries( pIndexParameters ).get( zResolver, pExternalizableCodeSupplier ) );
-        pObject.addIssue( zIssue );
+    public static void addIssue( JsonObject pObject, Enum<?> pCodeSupplier, Object... pIndexParameters ) {
+        pObject.addProblem( new Problem( pCodeSupplier, Strings.toArray( pIndexParameters ) ) );
     }
 }
