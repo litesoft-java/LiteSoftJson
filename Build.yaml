@@ -8,6 +8,7 @@ resources:
 
 dependencies:
 - ../LiteSoftCommonFoundation
+- ../LiteSoftServerUtils
 
 compileclasspath:
 - libs|**.jar

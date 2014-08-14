@@ -1,5 +1,6 @@
 package org.litesoft.json.shared;
 
+import org.litesoft.commonfoundation.base.*;
 import org.litesoft.commonfoundation.problems.*;
 
 import java.util.*;
@@ -14,28 +15,15 @@ public abstract class JsonParserRootObjectFactory {
         return sFactory;
     }
 
-    private final double mCurrentVersion;
-    private final double[] mSupportedVersions;
+    private final SupportingVersion mVersions;
 
-    protected JsonParserRootObjectFactory( double pCurrentVersion, Double pNextVersion, double... pOlderVersions ) {
+    protected JsonParserRootObjectFactory( SupportingVersion pVersions ) {
         sFactory = this;
-        mCurrentVersion = pCurrentVersion;
-        int zOlderStartsAt;
-        if ( pNextVersion == null ) {
-            mSupportedVersions = new double[(zOlderStartsAt = 1) + pOlderVersions.length];
-            mSupportedVersions[0] = pCurrentVersion;
-        } else {
-            mSupportedVersions = new double[(zOlderStartsAt = 2) + pOlderVersions.length];
-            mSupportedVersions[0] = pCurrentVersion;
-            mSupportedVersions[1] = pNextVersion;
-        }
-        if ( pOlderVersions.length != 0 ) {
-            System.arraycopy( pOlderVersions, 0, mSupportedVersions, zOlderStartsAt, pOlderVersions.length );
-        }
+        mVersions = Confirm.isNotNull( "SupportingVersion", pVersions );
     }
 
     public Double getCurrentVersion() {
-        return mCurrentVersion;
+        return mVersions.getCurrentVersion();
     }
 
     abstract public RootJsonObject createRootObject( String pJson, String pJsonVersionAttributeName, ProblemCollector pProblemCollector )
@@ -55,10 +43,10 @@ public abstract class JsonParserRootObjectFactory {
     }
 
     protected double verifyVersion( Double pVersion ) {
-        if ( pVersion == null ) {
+        if ( null == (pVersion = ConstrainTo.firstNonNull( pVersion, mVersions.getDefaultVersion() )) ) {
             throw new JsonVersionNotNumericException();
         }
-        for ( double zSupportedVersion : mSupportedVersions ) {
+        for ( double zSupportedVersion : mVersions.getSupportedVersions() ) {
             if ( zSupportedVersion == pVersion ) {
                 return zSupportedVersion;
             }

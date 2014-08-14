@@ -14,8 +14,8 @@ import java.sql.*;
 import java.util.*;
 
 public class GsonJsonParserRootObjectFactoryImpl extends JsonParserRootObjectFactory {
-    public GsonJsonParserRootObjectFactoryImpl( double pCurrentVersion, Double pNextVersion, double... pOlderVersions ) {
-        super( pCurrentVersion, pNextVersion, pOlderVersions );
+    public GsonJsonParserRootObjectFactoryImpl( SupportingVersion pVersions ) {
+        super( pVersions );
     }
 
     @Override
