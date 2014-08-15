@@ -31,6 +31,10 @@ public abstract class GsonPersister<T> implements Supplier<T>,
         saveJson( zJSON );
     }
 
+    protected T augment(T pNewInstance) {
+        return pNewInstance;
+    }
+
     protected abstract boolean fileExists();
 
     protected abstract String loadJson();
