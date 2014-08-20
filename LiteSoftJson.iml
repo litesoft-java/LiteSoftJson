@@ -32,11 +32,9 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/gson-2.2.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/server/gson-2.2.4.jar!/" />
         </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MODULE_DIR$/lib-src/gson-2.2.4-javadoc.jar!/" />
-        </JAVADOC>
+        <JAVADOC />
         <SOURCES>
           <root url="jar://$MODULE_DIR$/lib-src/gson-2.2.4-sources.jar!/" />
         </SOURCES>
@@ -45,7 +43,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/gwtStandIn.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/client/gwtStandIn.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
