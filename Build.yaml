@@ -6,9 +6,12 @@ resources:
 - src|**.xml
 - LICENSE
 
-dependencies:
+compiledependencies:
 - ../LiteSoftCommonFoundation
 - ../LiteSoftServerUtils
 
+classpath:
+- libs/server|**.jar
+
 compileclasspath:
-- libs|**.jar
+- libs/client|**.jar
